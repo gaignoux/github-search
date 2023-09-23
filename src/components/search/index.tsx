@@ -17,7 +17,7 @@ export const Search = ({ onSearch }: TSearchProps): ReactElement => {
   const [search, setSearch] = useState<string>();
 
   useEffect(() => {
-    if (search?.length && search.length >= 3) {
+    if (search?.length && search.length > 0) {
       onSearch && onSearch(search);
     }
   }, [search, onSearch]);
