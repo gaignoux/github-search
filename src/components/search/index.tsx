@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, ReactElement, useEffect, useState } from "react";
+import { ChangeEvent, ReactElement, useState } from "react";
 import {
   Box,
   Card,
@@ -10,17 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import style from "@base/styles/page.module.css";
-import { TSearchProps } from "@base/types/search";
+import { setSearch } from "@base/store/repositorySlice";
+import { useAppDispatch } from "@base/store";
 
-export const Search = ({ onSearch }: TSearchProps): ReactElement => {
+export const Search = (): ReactElement => {
   const [hasError, setHasError] = useState<boolean>(false);
-  const [search, setSearch] = useState<string>();
-
-  useEffect(() => {
-    if (search?.length && search.length > 0) {
-      onSearch && onSearch(search);
-    }
-  }, [search, onSearch]);
+  const dispatch = useAppDispatch();
 
   const handleSearch = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -29,7 +24,7 @@ export const Search = ({ onSearch }: TSearchProps): ReactElement => {
     setHasError(false);
 
     if (event.target.value) {
-      return setSearch(event.target.value);
+      return dispatch(setSearch(event.target.value));
     }
 
     setHasError(true);

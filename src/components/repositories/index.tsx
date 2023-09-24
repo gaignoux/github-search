@@ -9,11 +9,10 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
+import { useAppSelector } from "@base/store";
 
-export const Repositories = ({
-  items,
-  search,
-}: TRepositoriesProps): ReactElement => {
+export const Repositories = ({ items }: TRepositoriesProps): ReactElement => {
+  const search = useAppSelector<string>(({ repository }) => repository.search);
   const [limit, setLimit] = useState(10);
 
   const handleChange = (event: SelectChangeEvent<number>) => {
@@ -31,7 +30,7 @@ export const Repositories = ({
       >
         <Grid item>
           <Typography variant="caption" component="div">
-            Showing <b>1</b> - <b>{limit}</b> out of <b>{items.length}</b> for:{" "}
+            Showing <b>1</b> - <b>{limit}</b> out of <b>{items.length}</b> for:
             {`"${search}"`}
           </Typography>
         </Grid>
@@ -64,11 +63,25 @@ export const Repositories = ({
         </Grid>
       </Grid>
       <Grid container direction="row" spacing={2}>
-        {items.slice(0, limit).map((repo, index) => (
-          <Grid item key={index} sm={6}>
-            <Repository {...repo} />
-          </Grid>
-        ))}
+        {items
+          .slice(0, limit)
+          .sort((a, b) => {
+            if (a.favorite === undefined && b.favorite === undefined) {
+              return 0;
+            }
+            if (a.favorite && !b.favorite) {
+              return -1;
+            }
+            if (!a.favorite && b.favorite) {
+              return 1;
+            }
+            return 0;
+          })
+          .map((repo, index) => (
+            <Grid item key={index} sm={6}>
+              <Repository key={index} {...repo} />
+            </Grid>
+          ))}
       </Grid>
     </>
   );
