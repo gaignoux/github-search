@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { repositoryReducer } from "@base/store/repositorySlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistReducer } from "redux-persist";
-import storage from "@base/store/customStorage";
+import storage from "@base/lib/storage";
 import logger from "redux-logger";
 import { navigationReducer } from "@base/store/navigationSlice";
 

@@ -30,5 +30,8 @@
     "redux-logger": "^3.0.6",
     "redux-persist": "^6.0.0",
     "typescript": "5.2.2"
+  },
+  "devDependencies": {
+    "@types/redux-logger": "^3.0.9"
   }
 }
