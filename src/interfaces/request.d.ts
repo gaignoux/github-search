@@ -1,15 +1,10 @@
-import { AxiosRequestConfig } from "axios/index";
+import { AxiosRequestConfig } from "axios";
 
 export interface IRequests {
-  request<T>(options: AxiosRequestConfig): Promise<Awaited<T>>;
-  get<T>(endpoint: string, config?: object): Promise<Awaited<T>>;
-  post<T>(endpoint: string, body: object, config?: object): Promise<Awaited<T>>;
-  put<T>(endpoint: string, body: object, config?: object): Promise<Awaited<T>>;
-  delete<T>(endpoint: string, config?: object): Promise<Awaited<T>>;
-  patch<T>(
+  get<T>(endpoint: string, config?: AxiosRequestConfig): Promise<Awaited<T>>;
+  post<T>(
     endpoint: string,
-    body?: object,
-    config?: object,
+    body: object,
+    config?: AxiosRequestConfig,
   ): Promise<Awaited<T>>;
-  externalGet<T>(endpoint: string, config?: object): Promise<Awaited<T>>;
 }

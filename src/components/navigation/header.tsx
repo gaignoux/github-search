@@ -46,10 +46,12 @@ export const HeaderNavigation = (): ReactElement => {
                 color="inherit"
                 onClick={() => change("/my-favorites")}
               >
-                {favorites.length && (
+                {favorites.length ? (
                   <Badge badgeContent={favorites.length} color="error">
                     <Favorite />
                   </Badge>
+                ) : (
+                  <Favorite />
                 )}
               </IconButton>
             </Tooltip>

@@ -12,9 +12,18 @@ import { FooterNavigation } from "@base/components/navigation/footer";
 import style from "@base/styles/page.module.css";
 import { HeaderNavigation } from "@base/components/navigation/header";
 import { persistStore } from "redux-persist";
+import { QueryClient } from "@tanstack/query-core";
+import { QueryClientProvider } from "@tanstack/react-query";
 
 const clientSideEmotionCache = createEmotionCache();
 const inter = Inter({ subsets: ["latin"] });
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+});
 
 export default function Template({ children }: PropsWithChildren) {
   setTimeout(() => persistStore(store), 500);
@@ -26,7 +35,11 @@ export default function Template({ children }: PropsWithChildren) {
           <CssBaseline />
           <StoreProvider store={store}>
             <HeaderNavigation />
-            <main className={style.main}>{children}</main>
+            <main className={style.main}>
+              <QueryClientProvider client={queryClient}>
+                {children}
+              </QueryClientProvider>
+            </main>
             <FooterNavigation />
           </StoreProvider>
         </ThemeProvider>
