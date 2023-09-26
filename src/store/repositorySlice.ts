@@ -20,7 +20,7 @@ export const repositorySlice = createSlice<
     },
     remove: (state: TSearchState, { payload }) => {
       state.favorites = state.favorites.filter(
-        (favorite) => favorite.name !== payload.name,
+        (favorite) => favorite.id !== payload.id,
       );
     },
     setSearch: (state: TSearchState, { payload }) => {
@@ -28,16 +28,20 @@ export const repositorySlice = createSlice<
     },
     rateFavorite: (state: TSearchState, { payload }) => {
       state.favorites = state.favorites.map((favorite) => {
-        if (favorite.name === payload.name) {
+        if (favorite.id === payload.id) {
           favorite.rate = payload.value;
         }
 
         return favorite;
       });
     },
+    setPageInfo: (state: TSearchState, { payload }) => {
+      state.pageInfo = payload;
+    },
   },
 });
 
 export const repositoryReducer = repositorySlice.reducer;
 
-export const { add, remove, setSearch, rateFavorite } = repositorySlice.actions;
+export const { add, remove, setSearch, rateFavorite, setPageInfo } =
+  repositorySlice.actions;

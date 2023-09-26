@@ -5,6 +5,11 @@
   align-items: center;
   padding: 100px 4rem 65px 4rem;
   min-height: 100vh;
+  
+  @media screen and (max-width: 768px) {
+    padding-right: 0;
+    padding-left: 0;
+  }
 }
 
 .grid {

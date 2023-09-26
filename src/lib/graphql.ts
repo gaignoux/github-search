@@ -17,9 +17,14 @@ const SearchRepositoriesDocument = `
   ) {
     nodes {
       ... on Repository {
+        name
         nameWithOwner
         description
-        forkCount
+        openGraphImageUrl
+        id
+        homepageUrl
+        url
+        createdAt
         updatedAt
         stargazerCount
       }

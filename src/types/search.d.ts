@@ -1,12 +1,14 @@
 import { TRepository } from "@base/types/repository";
 import { PayloadAction } from "@reduxjs/toolkit";
+import { PageInfo } from "@base/interfaces/search";
 
 export type TSearchState = {
   favorites: TRepository[];
   search: string;
+  pageInfo?: PageInfo;
 };
 
-export type TFavoriteRate = { name: string; value: number };
+export type TFavoriteRate = { id: string; value: number };
 
 export type TSearchReducer = {
   add: (state: TSearchState, action: PayloadAction<TRepository>) => void;
@@ -15,5 +17,9 @@ export type TSearchReducer = {
   rateFavorite: (
     state: TSearchState,
     action: PayloadAction<TFavoriteRate>,
+  ) => void;
+  setPageInfo: (
+    state: TSearchState,
+    action: PayloadAction<PageInfo | undefined>,
   ) => void;
 };

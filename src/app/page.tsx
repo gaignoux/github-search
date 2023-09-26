@@ -1,37 +1,18 @@
 "use client";
 import { Search } from "@base/components/search";
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useState } from "react";
 import { SkeletonLoader } from "@base/components/loading";
-import { Container, Grid } from "@mui/material";
+import { Container } from "@mui/material";
 import { Repositories } from "@base/components/repositories";
-import { mock } from "@base/constants";
-import { TRepository } from "@base/types/repository";
-import { useRepositories } from "@base/hooks/useRepositories";
+import { PageInfo } from "@base/interfaces/search";
 import { useAppSelector } from "@base/store";
 
-interface PageInfo {
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-  endCursor?: string;
-  startCursor?: string;
-}
-
 export default function Home() {
-  const query = useAppSelector<string>(({ repository }) => repository.search);
-  const [pageInfo, setPageInfo] = useState<PageInfo>();
+  const pageInfo = useAppSelector<PageInfo | undefined>(
+    ({ repository }) => repository.pageInfo,
+  );
   const [after, setAfter] = useState<string | null>(null);
   const [before, setBefore] = useState<string | null>(null);
-
-  const { data: searchReposData } = useRepositories({
-    query,
-    after,
-    before,
-  });
-
-  const repositories = useMemo(() => {
-    setPageInfo({ ...(searchReposData?.search?.pageInfo as PageInfo) });
-    return searchReposData?.search?.nodes || mock;
-  }, [searchReposData]);
 
   const handleGotoNextPage = () => {
     setAfter(pageInfo?.endCursor || "");
@@ -47,14 +28,7 @@ export default function Home() {
     <Container maxWidth="lg">
       <Search />
       <Suspense fallback={<SkeletonLoader />}>
-        <Grid container spacing={2} direction="row" pt={2}>
-          <Grid item sm={4}>
-            Filters
-          </Grid>
-          <Grid item sm={8}>
-            <Repositories items={repositories as TRepository[]} />
-          </Grid>
-        </Grid>
+        <Repositories />
       </Suspense>
       <div className="flex flex-row space-x-6">
         <button

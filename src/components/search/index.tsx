@@ -11,9 +11,10 @@ import {
 } from "@mui/material";
 import style from "@base/styles/page.module.css";
 import { setSearch } from "@base/store/repositorySlice";
-import { useAppDispatch } from "@base/store";
+import { useAppDispatch, useAppSelector } from "@base/store";
 
 export const Search = (): ReactElement => {
+  const search = useAppSelector<string>(({ repository }) => repository.search);
   const [hasError, setHasError] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
@@ -47,6 +48,7 @@ export const Search = (): ReactElement => {
                 variant="outlined"
                 required
                 fullWidth
+                value={search}
                 error={hasError}
                 onChange={handleSearch}
                 helperText={

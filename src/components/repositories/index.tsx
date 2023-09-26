@@ -1,6 +1,5 @@
 "use client";
-import { ReactElement, useState } from "react";
-import { TRepositoriesProps } from "@base/types/repository";
+import { ReactElement, useEffect, useMemo, useState } from "react";
 import { Repository } from "@base/components/repository";
 import {
   Grid,
@@ -9,18 +8,71 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import { useAppSelector } from "@base/store";
+import { useAppDispatch, useAppSelector } from "@base/store";
+import { PageInfo } from "@base/interfaces/search";
+import { useDebounce } from "@base/hooks/useDebounce";
+import { useRepositories } from "@base/hooks/useRepositories";
+import { TRepository } from "@base/types/repository";
+import { setPageInfo } from "@base/store/repositorySlice";
 
-export const Repositories = ({ items }: TRepositoriesProps): ReactElement => {
+export const Repositories = (): ReactElement => {
   const search = useAppSelector<string>(({ repository }) => repository.search);
+  const dispatch = useAppDispatch();
+
   const [limit, setLimit] = useState(10);
+  const [total, setTotal] = useState(0);
+  const [after, setAfter] = useState<string | null>(null);
+  const [before, setBefore] = useState<string | null>(null);
 
   const handleChange = (event: SelectChangeEvent<number>) => {
     setLimit(event.target.value as number);
   };
 
+  const query = useDebounce<string>(search);
+
+  const repositories = useRepositories({
+    query,
+    after,
+    before,
+  });
+
+  const items = useMemo<TRepository[]>(() => {
+    let nodes: TRepository[] = [];
+
+    if (repositories?.search?.nodes) {
+      nodes = repositories?.search?.nodes.map((repo) => {
+        return {
+          user: repo.nameWithOwner,
+          name: repo.name,
+          description: repo.description,
+          id: repo.id,
+          url: repo.url,
+          homepage_url: repo.homepageUrl,
+          graphImage: repo.openGraphImageUrl,
+          stargazerCount: repo.stargazerCount,
+          created_at: repo.createdAt,
+          updated_at: repo.updatedAt,
+          rate: 0,
+          favorite: false,
+        } as TRepository;
+      });
+    }
+
+    return nodes;
+  }, [repositories]);
+
+  useEffect(() => {
+    repositories?.search?.pageInfo &&
+      dispatch(setPageInfo({ ...(repositories.search.pageInfo as PageInfo) }));
+  }, [repositories]);
+
+  useEffect(() => {
+    repositories?.search?.repositoryCount &&
+      setTotal(repositories.search.repositoryCount);
+  }, [repositories]);
+
   return (
-    <>
+    <Grid container direction="row" pt={2}>
       <Grid
         container
         direction="row"
@@ -30,7 +82,7 @@ export const Repositories = ({ items }: TRepositoriesProps): ReactElement => {
       >
         <Grid item>
           <Typography variant="caption" component="div">
-            Showing <b>1</b> - <b>{limit}</b> out of <b>{items.length}</b> for:
+            Showing <b>1</b> - <b>{limit}</b> out of <b>{total}</b> for:
             {`"${search}"`}
           </Typography>
         </Grid>
@@ -62,7 +114,13 @@ export const Repositories = ({ items }: TRepositoriesProps): ReactElement => {
           </Grid>
         </Grid>
       </Grid>
-      <Grid container direction="row" spacing={2}>
+      <Grid
+        container
+        direction="row"
+        width="100%"
+        rowSpacing={1}
+        columnSpacing={{ xs: 1, sm: 2, md: 3 }}
+      >
         {items
           .slice(0, limit)
           .sort((a, b) => {
@@ -83,6 +141,6 @@ export const Repositories = ({ items }: TRepositoriesProps): ReactElement => {
             </Grid>
           ))}
       </Grid>
-    </>
+    </Grid>
   );
 };

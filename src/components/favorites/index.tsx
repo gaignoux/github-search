@@ -14,13 +14,20 @@ export const Favorites = (): ReactElement => {
     <Grid container spacing={2} direction="row">
       {favorites.length ? (
         favorites.map((favorite, index) => (
-          <Grid item key={index} sm={3}>
+          <Grid item key={index} sm={6}>
             <Repository {...favorite} enableRating />
           </Grid>
         ))
       ) : (
-        <Grid item textAlign="center" width="100%">
-          <Typography variant="subtitle1">Empty list</Typography>
+        <Grid item width="100%">
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            height="500px"
+          >
+            <Typography variant="subtitle1">Empty list</Typography>
+          </Grid>
         </Grid>
       )}
     </Grid>
