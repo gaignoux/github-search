@@ -14,6 +14,8 @@ GITHUB_ACCESS_TOKEN=your_token_here
 After that, run the development server:
 
 ```bash
+npm install
+# and
 npm run dev
 # or
 yarn dev
