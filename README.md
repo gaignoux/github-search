@@ -1,3 +1,5 @@
+# Github Search Interface
+
 This project was done in partnership with [Featury](https://www.featury.io/), based on their challenge, this interface was built to search repositories using Graphql in a simpler way.
 
 ## Getting Started
