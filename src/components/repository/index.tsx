@@ -61,7 +61,7 @@ export const Repository = ({
    * Handles adding/removing the repository to/from favorites.
    */
   const favorite = () => {
-    const isInFavorite = favorites?.some((item) => item.name === name);
+    const isInFavorite = favorites?.some((item) => item.id === id);
     const item: TRepository = {
       name,
       user,
