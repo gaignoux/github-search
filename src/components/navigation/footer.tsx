@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@base/store";
 import { set } from "@base/store/navigationSlice";
 
+/**
+ * React component for the footer navigation bar with search and favorites links.
+ *
+ * @returns {ReactElement} The rendered component.
+ */
 export const FooterNavigation = (): ReactElement => {
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -12,6 +17,12 @@ export const FooterNavigation = (): ReactElement => {
     ({ navigation }) => navigation.current,
   );
 
+  /**
+   * Handles the navigation and state update when changing routes.
+   *
+   * @param {any} _ - The event (not used).
+   * @param {string} newValue - The target route value.
+   */
   const change = (_: any, newValue: string) => {
     dispatch(set(newValue));
     router.push(newValue);

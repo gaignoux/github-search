@@ -1,4 +1,5 @@
 "use client";
+
 import { ReactElement, useEffect, useMemo, useState } from "react";
 import { Repository } from "@base/components/repository";
 import {
@@ -14,16 +15,63 @@ import { useDebounce } from "@base/hooks/useDebounce";
 import { useRepositories } from "@base/hooks/useRepositories";
 import { TRepository } from "@base/types/repository";
 import { setPageInfo } from "@base/store/repositorySlice";
+import { TSearchState } from "@base/types/search";
+import { EmptyData } from "@base/components/empty-data";
+import { SkeletonLoader } from "@base/components/loading";
+import { IRepositoryHandle } from "@base/interfaces/repository";
 
+/**
+ * React component for handling and rendering a collection of repositories.
+ *
+ * @param {IRepositoryHandle} props - The component's props.
+ * @param {TRepository[]} props.items - An array of repositories to display.
+ * @param {string | undefined} props.search - An optional search query to filter repositories.
+ * @returns {JSX.Element} The rendered component.
+ */
+const HandleComponent = ({
+  items,
+  search,
+}: IRepositoryHandle): ReactElement | ReactElement[] => {
+  if (items.length > 0) {
+    return items.map((repo, index) => (
+      <Grid item key={index} sm={6}>
+        <Repository key={index} {...repo} />
+      </Grid>
+    ));
+  } else if (search) {
+    return (
+      <Grid item alignSelf="center" width="100%">
+        <SkeletonLoader />
+      </Grid>
+    );
+  }
+
+  return (
+    <Grid item alignSelf="center" width="100%">
+      <EmptyData text="You haven’t search for anything yet." />
+    </Grid>
+  );
+};
+
+/**
+ * React component for displaying a list of repositories with pagination and search.
+ *
+ * @returns {ReactElement} The rendered component.
+ */
 export const Repositories = (): ReactElement => {
-  const search = useAppSelector<string>(({ repository }) => repository.search);
+  const { search, favorites, after, before } = useAppSelector<TSearchState>(
+    ({ repository }) => repository,
+  );
   const dispatch = useAppDispatch();
 
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
-  const [after, setAfter] = useState<string | null>(null);
-  const [before, setBefore] = useState<string | null>(null);
 
+  /**
+   * Handles the change in the number of repositories to display per page.
+   *
+   * @param {SelectChangeEvent<number>} event - The event containing the selected limit value.
+   */
   const handleChange = (event: SelectChangeEvent<number>) => {
     setLimit(event.target.value as number);
   };
@@ -36,6 +84,9 @@ export const Repositories = (): ReactElement => {
     before,
   });
 
+  /**
+   * The list of repositories to display, filtered and sorted.
+   */
   const items = useMemo<TRepository[]>(() => {
     let nodes: TRepository[] = [];
 
@@ -47,19 +98,27 @@ export const Repositories = (): ReactElement => {
           description: repo.description,
           id: repo.id,
           url: repo.url,
-          homepage_url: repo.homepageUrl,
+          homepageUrl: repo.homepageUrl,
           graphImage: repo.openGraphImageUrl,
           stargazerCount: repo.stargazerCount,
-          created_at: repo.createdAt,
-          updated_at: repo.updatedAt,
+          createdAt: repo.createdAt,
+          updatedAt: repo.updatedAt,
           rate: 0,
-          favorite: false,
+          favorite: favorites.some((item) => item.id === repo.id),
         } as TRepository;
       });
     }
 
-    return nodes;
-  }, [repositories]);
+    return nodes.slice(0, limit).sort((a, b) => {
+      if (a.favorite && !b.favorite) {
+        return -1;
+      }
+      if (!a.favorite && b.favorite) {
+        return 1;
+      }
+      return 0;
+    });
+  }, [repositories, limit, favorites]);
 
   useEffect(() => {
     repositories?.search?.pageInfo &&
@@ -82,7 +141,8 @@ export const Repositories = (): ReactElement => {
       >
         <Grid item>
           <Typography variant="caption" component="div">
-            Showing <b>1</b> - <b>{limit}</b> out of <b>{total}</b> for:
+            Showing <b>1</b> - <b>{limit}</b> out of{" "}
+            <b>{items.length === 0 ? items.length : total}</b> for:
             {`"${search}"`}
           </Typography>
         </Grid>
@@ -121,25 +181,7 @@ export const Repositories = (): ReactElement => {
         rowSpacing={1}
         columnSpacing={{ xs: 1, sm: 2, md: 3 }}
       >
-        {items
-          .slice(0, limit)
-          .sort((a, b) => {
-            if (a.favorite === undefined && b.favorite === undefined) {
-              return 0;
-            }
-            if (a.favorite && !b.favorite) {
-              return -1;
-            }
-            if (!a.favorite && b.favorite) {
-              return 1;
-            }
-            return 0;
-          })
-          .map((repo, index) => (
-            <Grid item key={index} sm={6}>
-              <Repository key={index} {...repo} />
-            </Grid>
-          ))}
+        <HandleComponent {...{ items, search }} />
       </Grid>
     </Grid>
   );

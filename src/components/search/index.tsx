@@ -13,22 +13,27 @@ import style from "@base/styles/page.module.css";
 import { setSearch } from "@base/store/repositorySlice";
 import { useAppDispatch, useAppSelector } from "@base/store";
 
+/**
+ * React component for searching GitHub repositories using GraphQL and Next.js.
+ *
+ * @returns {ReactElement} The rendered component.
+ */
 export const Search = (): ReactElement => {
   const search = useAppSelector<string>(({ repository }) => repository.search);
   const [hasError, setHasError] = useState<boolean>(false);
   const dispatch = useAppDispatch();
 
+  /**
+   * Handles the search input change and dispatches the search action.
+   *
+   * @param {ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} event - The input change event.
+   */
   const handleSearch = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     event.preventDefault();
-    setHasError(false);
-
-    if (event.target.value) {
-      return dispatch(setSearch(event.target.value));
-    }
-
-    setHasError(true);
+    dispatch(setSearch(event.target.value));
+    setHasError(!event.target.value);
   };
 
   return (
@@ -46,7 +51,6 @@ export const Search = (): ReactElement => {
                 id="github-search"
                 label="Search wherever you want"
                 variant="outlined"
-                required
                 fullWidth
                 value={search}
                 error={hasError}

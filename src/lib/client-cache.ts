@@ -1,5 +1,10 @@
-import createCache from "@emotion/cache";
+import createCache, { EmotionCache } from "@emotion/cache";
 
-export default function createEmotionCache() {
+/**
+ * Creates an Emotion cache instance for managing styles.
+ *
+ * @returns {EmotionCache} The Emotion cache instance.
+ */
+export default function createEmotionCache(): EmotionCache {
   return createCache({ key: "css", prepend: true });
 }

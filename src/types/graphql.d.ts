@@ -1,17 +1,52 @@
+/**
+ * Represents a generic type that may have a value or be null.
+ * @template T - The type that may have a value or be null.
+ */
 export type Maybe<T> = T | null;
+
+/**
+ * Represents a generic type that may have a value or be null.
+ * @template T - The type that may have a value or be null.
+ */
 export type InputMaybe<T> = Maybe<T>;
+
+/**
+ * Represents an exact type that matches the keys of an object.
+ * @template T - The type to match exactly.
+ */
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
 
+/**
+ * Represents the variables for a searchRepositoriesQuery.
+ */
 export type SearchRepositoriesQueryVariables = Exact<{
+  /**
+   * The search query.
+   */
   query: Scalars["String"];
+  /**
+   * Optional cursor for pagination (start).
+   */
   after?: InputMaybe<Scalars["String"]>;
+  /**
+   * Optional cursor for pagination (end).
+   */
   before?: InputMaybe<Scalars["String"]>;
+  /**
+   * Optional limit for the number of results to fetch (from the start).
+   */
   first?: InputMaybe<Scalars["Int"]>;
+  /**
+   * Optional limit for the number of results to fetch (from the end).
+   */
   last?: InputMaybe<Scalars["Int"]>;
 }>;
 
+/**
+ * Represents scalar types used in GraphQL queries.
+ */
 export type Scalars = {
   ID: string;
   String: string;
@@ -47,56 +82,163 @@ export type Scalars = {
   X509Certificate: any;
 };
 
-export type SearchRepositoriesQuery = {
-  __typename?: "Query";
-  data: {
-    search: {
-      __typename?: "SearchResultItemConnection";
-      userCount: number;
-      repositoryCount: number;
-      nodes?: Array<{
-        __typename?: "Repository";
-        name: string;
-        nameWithOwner: string;
-        description?: string | null;
-        openGraphImageUrl: string;
-        id: string;
-        homepageUrl?: string;
-        url: string;
-        createdAt: string;
-        updatedAt: string;
-        stargazerCount: number;
-      }> | null;
-      pageInfo: {
-        __typename?: "PageInfo";
-        endCursor?: string | null;
-        startCursor?: string | null;
-        hasNextPage: boolean;
-        hasPreviousPage: boolean;
-      };
+/**
+ * The data returned by the search query.
+ */
+export type SearchRepositoryData = {
+  /**
+   * The search result containing user and repository information.
+   */
+  search: {
+    /**
+     * The GraphQL type name.
+     */
+    __typename?: "SearchResultItemConnection";
+    /**
+     * The number of users in the search result.
+     */
+    userCount: number;
+    /**
+     * The number of repositories in the search result.
+     */
+    repositoryCount: number;
+    /**
+     * An array of repository nodes in the search result.
+     */
+    nodes?: Array<{
+      /**
+       * The GraphQL type name.
+       */
+      __typename?: "Repository";
+      /**
+       * The name of the repository.
+       */
+      name: string;
+      /**
+       * The name of the repository with the owner.
+       */
+      nameWithOwner: string;
+      /**
+       * The description of the repository.
+       */
+      description?: string | null;
+      /**
+       * The URL of the repository.
+       */
+      url: string;
+      /**
+       * The creation date and time of the repository.
+       */
+      createdAt: string;
+      /**
+       * The last update date and time of the repository.
+       */
+      updatedAt: string;
+      /**
+       * The count of stargazers for the repository.
+       */
+      stargazerCount: number;
+      /**
+       * The URL of the repository's open graph image.
+       */
+      openGraphImageUrl: string;
+      /**
+       * The homepage URL of the repository.
+       */
+      homepageUrl?: string;
+      /**
+       * The unique identifier of the repository.
+       */
+      id: string;
+    }> | null;
+    /**
+     * Pagination information for the search result.
+     */
+    pageInfo: {
+      /**
+       * The GraphQL type name.
+       */
+      __typename?: "PageInfo";
+      /**
+       * The cursor for the end of the current page.
+       */
+      endCursor?: string | null;
+      /**
+       * The cursor for the start of the current page.
+       */
+      startCursor?: string | null;
+      /**
+       * Indicates whether there is a next page of results.
+       */
+      hasNextPage: boolean;
+      /**
+       * Indicates whether there is a previous page of results.
+       */
+      hasPreviousPage: boolean;
     };
   };
 };
 
+/**
+ * Represents a GraphQL query for searching repositories.
+ */
+export type SearchRepositoriesQuery = {
+  /**
+   * The GraphQL type name.
+   */
+  __typename?: "Query";
+  /**
+   * The data returned by the search query.
+   */
+  data: SearchRepositoryData;
+};
+
+/**
+ * Represents a GraphQL object type for a repository.
+ */
 export type Repository = Node & {
+  /**
+   * The GraphQL type name.
+   */
   __typename?: "Repository";
-  /** Identifies the date and time when the object was created. */
+  /**
+   * Identifies the date and time when the repository was created.
+   */
   createdAt: Scalars["DateTime"];
-  /** The description of the repository. */
+  /**
+   * The description of the repository.
+   */
   description?: Maybe<Scalars["String"]>;
-  /** The repository's URL. */
+  /**
+   * The homepage URL of the repository.
+   */
   homepageUrl?: Maybe<Scalars["URI"]>;
+  /**
+   * The unique identifier of the repository.
+   */
   id: Scalars["ID"];
-  /** The name of the repository. */
+  /**
+   * The name of the repository.
+   */
   name: Scalars["String"];
-  /** The repository's name with owner. */
+  /**
+   * The name of the repository with the owner.
+   */
   nameWithOwner: Scalars["String"];
-  /** The image used to represent this repository in Open Graph data. */
+  /**
+   * The URL of the repository's open graph image.
+   */
   openGraphImageUrl: Scalars["URI"];
-  /** Returns a count of how many stargazers there are on this object */
+  /**
+   * The count of stargazers for the repository.
+   */
   stargazerCount: Scalars["Int"];
-  /** Identifies the date and time when the object was last updated. */
+  /**
+   * Identifies the date and time when the repository was last updated.
+   */
   updatedAt: Scalars["DateTime"];
-  /** The HTTP URL for this repository */
+  /**
+   * The HTTP URL for this repository.
+   */
   url: Scalars["URI"];
 };

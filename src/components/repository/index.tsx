@@ -19,6 +19,25 @@ import { Favorite } from "@mui/icons-material";
 import { add, rateFavorite, remove } from "@base/store/repositorySlice";
 import { useAppDispatch, useAppSelector } from "@base/store";
 
+/**
+ * React component for displaying information about a repository.
+ *
+ * @param {TRepositoryProps} props - The component's props.
+ * @param {string} props.name - The name of the repository.
+ * @param {string} props.user - The owner/user of the repository.
+ * @param {string} props.description - The description of the repository.
+ * @param {string} props.url - The URL of the repository.
+ * @param {string} props.id - The unique identifier of the repository.
+ * @param {number | undefined} props.rate - The rating value for the repository (optional).
+ * @param {string} props.graphImage - The URL of the repository's open graph image.
+ * @param {string} props.createdAt - The creation date of the repository.
+ * @param {string} props.updatedAt - The last update date of the repository.
+ * @param {number} props.stargazerCount - The count of stargazers for the repository.
+ * @param {string | undefined} props.homepageUrl - The URL of the repository's homepage (optional).
+ * @param {boolean} props.enableRating - Indicates whether rating functionality is enabled (default: false).
+ *
+ * @returns {ReactElement} The rendered component.
+ */
 export const Repository = ({
   name,
   user,
@@ -27,10 +46,10 @@ export const Repository = ({
   id,
   rate,
   graphImage,
-  created_at,
-  updated_at,
+  createdAt,
+  updatedAt,
   stargazerCount,
-  homepage_url,
+  homepageUrl,
   enableRating = false,
 }: TRepositoryProps): ReactElement => {
   const favorites = useAppSelector<TRepository[]>(
@@ -38,6 +57,9 @@ export const Repository = ({
   );
   const dispatch = useAppDispatch();
 
+  /**
+   * Handles adding/removing the repository to/from favorites.
+   */
   const favorite = () => {
     const isInFavorite = favorites?.some((item) => item.name === name);
     const item: TRepository = {
@@ -47,21 +69,24 @@ export const Repository = ({
       url,
       id,
       graphImage,
-      created_at,
-      updated_at,
+      createdAt,
+      updatedAt,
       stargazerCount,
-      homepage_url,
+      homepageUrl,
       rate: 0,
       favorite: isInFavorite,
     };
     dispatch(isInFavorite ? remove(item) : add(item));
   };
 
+  /**
+   * Constructs the card header with user avatar, repository name, and favorite button.
+   */
   const cardHeader = useMemo(() => {
     const isInFavorite = favorites?.some((item) => item.id === id);
     return {
       avatar: (
-        <Avatar alt="User avatar" src={`${url.split(`/${name}`).at(0)}.png`} />
+        <Avatar alt="User avatar" src={`${url?.split(`/${name}`).at(0)}.png`} />
       ),
       title: name,
       subheader: `@${user.split("/").at(0)}`,
@@ -79,6 +104,9 @@ export const Repository = ({
     };
   }, [id, name, user, url, favorites]);
 
+  /**
+   * Represents the header section of the card.
+   */
   const Header = () => <CardHeader {...cardHeader} />;
 
   return (
@@ -103,9 +131,9 @@ export const Repository = ({
         <Grid item>
           <Typography variant="caption" component="div">
             Created at{" "}
-            <b>{new Date(created_at as string).toLocaleDateString()}</b> and
+            <b>{new Date(createdAt as string).toLocaleDateString()}</b> and
             updated at{" "}
-            <b>{new Date(updated_at as string).toLocaleDateString()}</b> for the
+            <b>{new Date(updatedAt as string).toLocaleDateString()}</b> for the
             last time.
           </Typography>
           <Typography variant="caption" component="div">
@@ -126,11 +154,11 @@ export const Repository = ({
           <Button size="small" color="primary" href={url} target="_blank">
             See more
           </Button>
-          {homepage_url && (
+          {homepageUrl && (
             <Button
               size="small"
               color="primary"
-              href={homepage_url}
+              href={homepageUrl}
               target="_blank"
             >
               Docs
